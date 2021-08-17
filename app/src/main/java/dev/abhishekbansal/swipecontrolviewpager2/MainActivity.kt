@@ -26,21 +26,12 @@ class MainActivity : AppCompatActivity() {
         val sectionsPagerAdapter = SectionsPagerAdapter(this, colorList)
         binding.viewPager.adapter = sectionsPagerAdapter
 
-        TabLayoutMediator(binding.tabs, binding.viewPager) { tab, position ->
-            tab.text = when (position) {
-                0 -> "CYAN"
-                1 -> "GREEN"
-                2 -> "YELLOW"
-                else -> ""
-            }
-        }.attach()
-
         // apply touch listener on ViewPager RecyclerView
         val recyclerView = binding.viewPager[0] as? RecyclerView
         if (recyclerView != null) {
             recyclerView.addOnItemTouchListener(swipeControlTouchListener)
         } else {
-            Log.w(localClassName, "RecyclerView is null, API changed ?!")
+            Log.w(localClassName, "RecyclerView is null, Version changed ?!")
         }
 
         // finally hookup the radio group
