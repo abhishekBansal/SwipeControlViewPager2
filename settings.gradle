@@ -1,0 +1,2 @@
+rootProject.name = "SwipeControlViewPager2"
+include ':app'
