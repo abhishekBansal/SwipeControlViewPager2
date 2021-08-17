@@ -2,20 +2,20 @@ package dev.abhishekbansal.swipecontrolviewpager2
 
 import android.graphics.Color
 import android.os.Bundle
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.tabs.TabLayout
-import androidx.viewpager.widget.ViewPager
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import android.view.Menu
-import android.view.MenuItem
+import androidx.core.view.get
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayoutMediator
-import dev.abhishekbansal.swipecontrolviewpager2.ui.main.SectionsPagerAdapter
 import dev.abhishekbansal.swipecontrolviewpager2.databinding.ActivityMainBinding
+import dev.abhishekbansal.swipecontrolviewpager2.ui.main.SectionsPagerAdapter
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private val swipeControlTouchListener by lazy {
+        SwipeControlTouchListener()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,12 +27,33 @@ class MainActivity : AppCompatActivity() {
         binding.viewPager.adapter = sectionsPagerAdapter
 
         TabLayoutMediator(binding.tabs, binding.viewPager) { tab, position ->
-            tab.text = when(position) {
+            tab.text = when (position) {
                 0 -> "CYAN"
                 1 -> "GREEN"
                 2 -> "YELLOW"
                 else -> ""
             }
         }.attach()
+
+        // apply touch listener on ViewPager RecyclerView
+        val recyclerView = binding.viewPager[0] as? RecyclerView
+        if (recyclerView != null) {
+            recyclerView.addOnItemTouchListener(swipeControlTouchListener)
+        } else {
+            Log.w(localClassName, "RecyclerView is null, API changed ?!")
+        }
+
+        // finally hookup the radio group
+        binding.swipeDirectionRg.setOnCheckedChangeListener { _, checkedId ->
+            swipeControlTouchListener.setSwipeDirection(
+                when (checkedId) {
+                    R.id.allRb -> SwipeDirection.ALL
+                    R.id.leftRb -> SwipeDirection.LEFT
+                    R.id.rightRb -> SwipeDirection.RIGHT
+                    R.id.noneRb -> SwipeDirection.NONE
+                    else -> SwipeDirection.ALL
+                }
+            )
+        }
     }
 }
